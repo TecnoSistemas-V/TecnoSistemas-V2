@@ -1,1 +1,70 @@
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Constancia de Estudios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Times New Roman', Times, serif; background: #e0e0e0; padding: 40px 20px; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .hoja { max-width: 800px; margin: auto; background: white; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .contenido { padding: 50px; position: relative; }
+        .header { text-align: center; border-bottom: 3px solid #003366; margin-bottom: 30px; padding-bottom: 20px; }
+        .header h1 { color: #003366; font-size: 28px; letter-spacing: 2px; margin-bottom: 5px; }
+        .header p { color: #555; font-size: 14px; }
+        .titulo-constancia { text-align: center; margin: 30px 0; }
+        .titulo-constancia h2 { color: #003366; text-decoration: underline; font-size: 22px; text-transform: uppercase; }
+        .cuerpo { margin: 40px 0; line-height: 2; font-size: 16px; text-align: justify; }
+        .cuerpo strong { color: #003366; }
+        .footer { margin-top: 60px; text-align: center; }
+        .firma { margin-top: 50px; }
+        .firma-linea { width: 250px; border-top: 1px solid #000; margin: 10px auto; }
+        .firma-texto { font-size: 14px; color: #555; }
+        .fecha { margin-top: 20px; font-size: 14px; }
+        .sello { position: absolute; bottom: 80px; right: 50px; width: 100px; height: 100px; border: 2px solid #003366; border-radius: 50%; opacity: 0.3; text-align: center; line-height: 96px; font-size: 12px; color: #003366; }
+        .btn-print { position: fixed; bottom: 20px; right: 20px; background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s; }
+        .btn-print:hover { background: #218838; transform: translateY(-2px); }
+        @media print { body { background: white; padding: 0; } .btn-print { display: none; } .sello { opacity: 0.2; } }
+    </style>
+</head>
+<body>
+    <div class="hoja">
+        <div class="contenido">
+            <div class="header">
+                <h1>TECNOSISTEMAS-V2</h1>
+                <p>Formación Tecnológica de Excelencia</p>
+                <p>Valera - Estado Trujillo</p>
+            </div>
+            <div class="titulo-constancia">
+                <h2>CONSTANCIA DE ESTUDIOS</h2>
+            </div>
+            <div class="cuerpo">
+                <p>Por medio de la presente, la Dirección Académica de <strong>TECNOSISTEMAS-V2</strong>, hace constar que el(la) ciudadano(a):</p>
+                <p style="text-align: center; margin: 20px 0; font-size: 18px;"><strong id="nom"></strong></p>
+                <p>Titular de la Cédula de Identidad N° <strong><span id="ci"></span></strong>, se encuentra actualmente cursando estudios en el área de:</p>
+                <p style="text-align: center; margin: 20px 0; font-size: 18px;"><strong id="car"></strong></p>
+                <p>Constancia que se expide a solicitud del interesado para los fines que estime convenientes.</p>
+            </div>
+            <div class="footer">
+                <div class="firma">
+                    <div class="firma-linea"></div>
+                    <div class="firma-texto"><strong>Ing. Fernando Rodríguez</strong><br>Director Académico</div>
+                </div>
+                <div class="fecha"><p>Fecha: <strong><span id="fecha"></span></strong></p></div>
+            </div>
+            <div class="sello">SELLO<br>INSTITUCIONAL</div>
+        </div>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <script>
+        const data = localStorage.getItem('estudiante_activo');
+        if (!data) { window.location.href = "../solicitud.html"; }
+        else {
+            const e = JSON.parse(data);
+            document.getElementById('nom').innerText = e.Nombres + " " + e.Apellidos;
+            document.getElementById('ci').innerText = e.Cédula;
+            document.getElementById('car').innerText = e.Carrera;
+            document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+        }
+    </script>
+</body>
+</html>
