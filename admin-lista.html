@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Lista de Estudiantes</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <style>
+        /* Estilos específicos para la tabla */
+        .table-container {
+            max-width: 1200px;
+            width: 100%;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #003366;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .btn-accion {
+            padding: 6px 12px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-editar {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-editar:hover {
+            background: #e0a800;
+        }
+        
+        .btn-eliminar {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-eliminar:hover {
+            background: #c82333;
+        }
+        
+        .btn-refresh {
+            background: #17a2b8;
+            color: white;
+            margin-bottom: 20px;
+            width: auto;
+            padding: 10px 20px;
+        }
+        
+        .btn-refresh:hover {
+            background: #138496;
+        }
+        
+        .buscador-tabla {
+            margin-bottom: 20px;
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .estadisticas {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #003366;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #003366;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #003366;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card" style="max-width: 1200px;">
+        <div class="logo">
+            <h1>🏢 TecnoSistemas-V2</h1>
+            <p>Panel de Administración - Lista de Estudiantes</p>
+        </div>
+        
+        <div class="header-actions">
+            <input type="text" id="buscador" class="buscador-tabla" placeholder="🔍 Buscar por cédula, nombre o apellido...">
+            <div>
+                <button class="btn-refresh" onclick="cargarEstudiantes()">🔄 Refrescar Lista</button>
+                <a href="nominas.html" class="btn-primary" style="display: inline-block; padding: 10px 20px; text-decoration: none; margin-left: 10px;">📤 Cargar CSV</a>
+                <a href="solicitud.html" class="btn-secondary" style="display: inline-block; padding: 10px 20px; text-decoration: none; margin-left: 10px;">🔍 Buscador</a>
+                <a href="index.html" class="btn-link" style="margin-left: 10px;">🏠 Inicio</a>
+            </div>
+        </div>
+        
+        <div class="estadisticas" id="estadisticas">
+            Cargando estudiantes...
+        </div>
+        
+        <div class="table-container">
+            <table id="tabla-estudiantes">
+                <thead>
+                    <tr>
+                        <th>Cédula</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Carrera</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    <tr>
+                        <td colspan="5" class="loading">Cargando datos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal para editar -->
+    <div id="modal-editar" class="modal">
+        <div class="modal-content">
+            <h3>✏️ Editar Estudiante</h3>
+            <input type="text" id="edit-cedula" placeholder="Cédula">
+            <input type="text" id="edit-nombres" placeholder="Nombres">
+            <input type="text" id="edit-apellidos" placeholder="Apellidos">
+            <input type="text" id="edit-carrera" placeholder="Carrera">
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="guardarEdicion()">💾 Guardar</button>
+                <button class="btn-danger" onclick="cerrarModal()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { db } from './js/conexion.js';
+        import { collection, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
+        let estudiantesActuales = []; // Guardar todos los estudiantes para el buscador
+        
+        // Función para cargar todos los estudiantes
+        window.cargarEstudiantes = async function() {
+            const tbody = document.getElementById('tabla-body');
+            tbody.innerHTML = '<tr><td colspan="5" class="loading">Cargando estudiantes...</td></tr>';
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "estudiantes"));
+                estudiantesActuales = [];
+                
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="loading">📭 No hay estudiantes registrados. Ve a "Cargar CSV" para agregar.</td></tr>';
+                    document.getElementById('estadisticas').innerHTML = '📊 Total: 0 estudiantes';
+                    return;
+                }
+                
+                let html = '';
+                querySnapshot.forEach((docu) => {
+                    const data = docu.data();
+                    const estudiante = {
+                        id: docu.id,
+                        cedula: data.Cédula || '',
+                        nombres: data.Nombres || '',
+                        apellidos: data.Apellidos || '',
+                        carrera: data.Carrera || ''
+                    };
+                    estudiantesActuales.push(estudiante);
+                    
+                    html += `
+                        <tr data-id="${estudiante.id}">
+                            <td>${estudiante.cedula}</td>
+                            <td>${estudiante.nombres}</td>
+                            <td>${estudiante.apellidos}</td>
+                            <td>${estudiante.carrera}</td>
+                            <td>
+                                <button class="btn-accion btn-editar" onclick="abrirEditar('${estudiante.id}')">✏️ Editar</button>
+                                <button class="btn-accion btn-eliminar" onclick="eliminarEstudiante('${estudiante.id}')">🗑️ Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                document.getElementById('estadisticas').innerHTML = `📊 Total: ${estudiantesActuales.length} estudiantes registrados`;
+                
+            } catch (error) {
+                console.error("Error al cargar:", error);
+                tbody.innerHTML = '<tr><td colspan="5" class="loading">❌ Error al cargar los datos. Verifica tu conexión.</td></tr>';
+            }
+        };
+        
+        // Buscador en tiempo real
+        const buscador = document.getElementById('buscador');
+        if (buscador) {
+            buscador.addEventListener('keyup', function(e) {
+                const termino = e.target.value.toLowerCase();
+                const filtrados = estudiantesActuales.filter(est => 
+                    est.cedula.toLowerCase().includes(termino) ||
+                    est.nombres.toLowerCase().includes(termino) ||
+                    est.apellidos.toLowerCase().includes(termino) ||
+                    est.carrera.toLowerCase().includes(termino)
+                );
+                
+                const tbody = document.getElementById('tabla-body');
+                if (filtrados.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="loading">🔍 No se encontraron resultados</td></tr>';
+                } else {
+                    let html = '';
+                    filtrados.forEach(est => {
+                        html += `
+                            <tr data-id="${est.id}">
+                                <td>${est.cedula}</td>
+                                <td>${est.nombres}</td>
+                                <td>${est.apellidos}</td>
+                                <td>${est.carrera}</td>
+                                <td>
+                                    <button class="btn-accion btn-editar" onclick="abrirEditar('${est.id}')">✏️ Editar</button>
+                                    <button class="btn-accion btn-eliminar" onclick="eliminarEstudiante('${est.id}')">🗑️ Eliminar</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = html;
+                }
+            });
+        }
+        
+        let estudianteIdEditando = null;
+        
+        // Abrir modal para editar
+        window.abrirEditar = async function(id) {
+            estudianteIdEditando = id;
+            const estudiante = estudiantesActuales.find(e => e.id === id);
+            if (estudiante) {
+                document.getElementById('edit-cedula').value = estudiante.cedula;
+                document.getElementById('edit-nombres').value = estudiante.nombres;
+                document.getElementById('edit-apellidos').value = estudiante.apellidos;
+                document.getElementById('edit-carrera').value = estudiante.carrera;
+                document.getElementById('modal-editar').style.display = 'flex';
+            }
+        };
+        
+        // Guardar edición
+        window.guardarEdicion = async function() {
+            if (!estudianteIdEditando) return;
+            
+            const datosActualizados = {
+                "Cédula": document.getElementById('edit-cedula').value,
+                "Nombres": document.getElementById('edit-nombres').value,
+                "Apellidos": document.getElementById('edit-apellidos').value,
+                "Carrera": document.getElementById('edit-carrera').value
+            };
+            
+            try {
+                const estudianteRef = doc(db, "estudiantes", estudianteIdEditando);
+                await updateDoc(estudianteRef, datosActualizados);
+                alert("✅ Estudiante actualizado correctamente");
+                cerrarModal();
+                cargarEstudiantes();
+            } catch (error) {
+                console.error("Error al actualizar:", error);
+                alert("❌ Error al actualizar el estudiante");
+            }
+        };
+        
+        // Eliminar estudiante
+        window.eliminarEstudiante = async function(id) {
+            if (!confirm("⚠️ ¿Estás seguro de eliminar este estudiante? Esta acción no se puede deshacer.")) return;
+            
+            try {
+                await deleteDoc(doc(db, "estudiantes", id));
+                alert("✅ Estudiante eliminado correctamente");
+                cargarEstudiantes();
+            } catch (error) {
+                console.error("Error al eliminar:", error);
+                alert("❌ Error al eliminar el estudiante");
+            }
+        };
+        
+        window.cerrarModal = function() {
+            document.getElementById('modal-editar').style.display = 'none';
+            estudianteIdEditando = null;
+        };
+        
+        // Cargar datos al iniciar
+        cargarEstudiantes();
+    </script>
+</body>
+</html>
