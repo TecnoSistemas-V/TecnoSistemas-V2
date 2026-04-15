@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - TecnoSistemas-V2</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <h1>🏢 TecnoSistemas-V2</h1>
+            <p>Panel de Administración</p>
+        </div>
+        <h2>Cargar Nómina</h2>
+        <div class="info-box">
+            <p>📌 Formato CSV: Cédula,Apellidos,Nombres,Carrera</p>
+            <p>📌 Ejemplo: 12345678,Pérez García,Juan,Ingeniería</p>
+        </div>
+        <input type="file" id="csv-file" accept=".csv">
+        <button class="btn-primary" onclick="procesarArchivo()">🚀 SUBIR CSV</button>
+        <button class="btn-danger" onclick="vaciarTodo()">🗑️ LIMPIAR NUBE</button>
+        <div class="separator"></div>
+        <a href="solicitud.html" class="btn-link">🔍 Ir al Buscador</a>
+        <a href="index.html" class="btn-link">🏠 Inicio</a>
+    </div>
+    <script type="module" src="js/crud.js"></script>
+</body>
+</html>
