@@ -80,6 +80,18 @@
         .btn-refresh:hover {
             background: #138496;
         }
+
+        /* NUEVO: Estilo para el botón "Nuevo Estudiante" */
+        .btn-nuevo {
+            background: #28a745;
+            color: white;
+            margin-bottom: 20px;
+            width: auto;
+            padding: 10px 20px;
+        }
+        .btn-nuevo:hover {
+            background: #218838;
+        }
         
         .buscador-tabla {
             margin-bottom: 20px;
@@ -169,6 +181,8 @@
         <div class="header-actions">
             <input type="text" id="buscador" class="buscador-tabla" placeholder="🔍 Buscar por cédula, nombre o apellido...">
             <div>
+                <!-- NUEVO: Botón para añadir estudiante -->
+                <button class="btn-nuevo" onclick="abrirNuevo()">➕ Nuevo Estudiante</button>
                 <button class="btn-refresh" onclick="cargarEstudiantes()">🔄 Refrescar Lista</button>
                 <a href="nominas.html" class="btn-primary" style="display: inline-block; padding: 10px 20px; text-decoration: none; margin-left: 10px;">📤 Cargar CSV</a>
                 <a href="solicitud.html" class="btn-secondary" style="display: inline-block; padding: 10px 20px; text-decoration: none; margin-left: 10px;">🔍 Buscador</a>
@@ -200,16 +214,16 @@
         </div>
     </div>
     
-    <!-- Modal para editar -->
+    <!-- Modal para EDITAR y NUEVO (reutilizamos el mismo) -->
     <div id="modal-editar" class="modal">
         <div class="modal-content">
-            <h3>✏️ Editar Estudiante</h3>
+            <h3 id="modal-titulo">✏️ Editar Estudiante</h3>
             <input type="text" id="edit-cedula" placeholder="Cédula">
             <input type="text" id="edit-nombres" placeholder="Nombres">
             <input type="text" id="edit-apellidos" placeholder="Apellidos">
             <input type="text" id="edit-carrera" placeholder="Carrera">
             <div class="modal-buttons">
-                <button class="btn-primary" onclick="guardarEdicion()">💾 Guardar</button>
+                <button class="btn-primary" id="modal-guardar-btn">💾 Guardar</button>
                 <button class="btn-danger" onclick="cerrarModal()">❌ Cancelar</button>
             </div>
         </div>
@@ -217,9 +231,10 @@
     
     <script type="module">
         import { db } from './js/conexion.js';
-        import { collection, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, updateDoc, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         let estudiantesActuales = []; // Guardar todos los estudiantes para el buscador
+        let estudianteIdEditando = null; // Si es null, significa que estamos en modo "nuevo"
         
         // Función para cargar todos los estudiantes
         window.cargarEstudiantes = async function() {
@@ -307,22 +322,78 @@
             });
         }
         
-        let estudianteIdEditando = null;
+        // --- NUEVA FUNCIÓN: Abrir modal para crear estudiante ---
+        window.abrirNuevo = function() {
+            estudianteIdEditando = null; // Modo creación
+            document.getElementById('modal-titulo').innerText = '➕ Nuevo Estudiante';
+            // Limpiar campos del formulario
+            document.getElementById('edit-cedula').value = '';
+            document.getElementById('edit-nombres').value = '';
+            document.getElementById('edit-apellidos').value = '';
+            document.getElementById('edit-carrera').value = '';
+            
+            // Cambiar la acción del botón guardar temporalmente
+            const guardarBtn = document.getElementById('modal-guardar-btn');
+            guardarBtn.onclick = () => guardarNuevoEstudiante();
+            
+            document.getElementById('modal-editar').style.display = 'flex';
+        };
         
-        // Abrir modal para editar
+        // --- FUNCIÓN MODIFICADA: Abrir modal para editar ---
         window.abrirEditar = async function(id) {
             estudianteIdEditando = id;
+            document.getElementById('modal-titulo').innerText = '✏️ Editar Estudiante';
             const estudiante = estudiantesActuales.find(e => e.id === id);
             if (estudiante) {
                 document.getElementById('edit-cedula').value = estudiante.cedula;
                 document.getElementById('edit-nombres').value = estudiante.nombres;
                 document.getElementById('edit-apellidos').value = estudiante.apellidos;
                 document.getElementById('edit-carrera').value = estudiante.carrera;
+                
+                // Asegurar que el botón guardar ejecute la edición
+                const guardarBtn = document.getElementById('modal-guardar-btn');
+                guardarBtn.onclick = () => guardarEdicion();
+                
                 document.getElementById('modal-editar').style.display = 'flex';
             }
         };
         
-        // Guardar edición
+        // --- NUEVA FUNCIÓN: Guardar estudiante nuevo ---
+        window.guardarNuevoEstudiante = async function() {
+            const nuevaCedula = document.getElementById('edit-cedula').value.trim();
+            const nuevosNombres = document.getElementById('edit-nombres').value.trim();
+            const nuevosApellidos = document.getElementById('edit-apellidos').value.trim();
+            const nuevaCarrera = document.getElementById('edit-carrera').value.trim();
+            
+            if (!nuevaCedula || !nuevosNombres || !nuevosApellidos || !nuevaCarrera) {
+                alert("⚠️ Por favor, completa todos los campos.");
+                return;
+            }
+            
+            // Opcional: Verificar si ya existe una cédula igual para evitar duplicados
+            const existe = estudiantesActuales.some(est => est.cedula === nuevaCedula);
+            if (existe) {
+                alert("❌ Ya existe un estudiante con esta cédula. Usa la opción 'Editar' si quieres modificar sus datos.");
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, "estudiantes"), {
+                    "Cédula": nuevaCedula,
+                    "Nombres": nuevosNombres,
+                    "Apellidos": nuevosApellidos,
+                    "Carrera": nuevaCarrera
+                });
+                alert("✅ Estudiante agregado correctamente");
+                cerrarModal();
+                cargarEstudiantes(); // Recargar la tabla para mostrar el nuevo estudiante
+            } catch (error) {
+                console.error("Error al agregar:", error);
+                alert("❌ Error al agregar el estudiante");
+            }
+        };
+        
+        // --- FUNCIÓN MODIFICADA: Guardar edición (refactorizada para claridad) ---
         window.guardarEdicion = async function() {
             if (!estudianteIdEditando) return;
             
