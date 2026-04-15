@@ -1,5 +1,260 @@
-<div class="info-box">
-    <p>📌 Formato CSV (6 columnas):</p>
-    <small>Cédula,Apellido,Nombre,Carrera,Sección,Dirección</small><br>
-    <small>📝 Ejemplo: 40000001,ALVARADO PEÑA,LUIS MIGUEL,Ingeniería Eléctrica,1-A,VALERA LA BEATRIZ</small>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - TecnoSistemas-V</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <style>
+        /* Estilos para el indicador de progreso */
+        .progress-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        .progress-container.visible {
+            display: block;
+        }
+        .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #003366;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .progress-bar-wrapper {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #28a745;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            font-size: 13px;
+            color: #003366;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .mensaje-progreso {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .info-campos {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: left;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <h1>🏢 TecnoSistemas-V2</h1>
+            <p>Panel de Administración - Carga de Nóminas</p>
+        </div>
+        
+        <h2>Cargar Estudiantes</h2>
+        
+        <div class="info-campos">
+            <strong>📌 Formato del CSV (6 columnas requeridas):</strong><br>
+            <code>Cédula,Apellido,Nombre,Carrera,Sección,Dirección</code><br>
+            <small>Ejemplo: 40000001,ALVARADO PEÑA,LUIS MIGUEL,Ingeniería Eléctrica,1-A,"VALERA, LA BEATRIZ"</small>
+        </div>
+        
+        <input type="file" id="csv-file" accept=".csv">
+        
+        <button class="btn-primary" id="btn-subir" style="width: 100%;">🚀 SUBIR CSV</button>
+        <button class="btn-danger" id="btn-vaciar" style="width: 100%; margin-top: 10px;">🗑️ LIMPIAR NUBE</button>
+        
+        <!-- Contenedor para el progreso -->
+        <div id="progressContainer" class="progress-container">
+            <div class="mensaje-progreso">
+                <span class="spinner"></span>
+                <span id="progressMessage">Procesando...</span>
+            </div>
+            <div class="progress-bar-wrapper">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            <div id="progressText" class="progress-text"></div>
+        </div>
+        
+        <div class="separator"></div>
+        
+        <a href="solicitud.html" class="btn-link">🔍 Ir al Buscador</a>
+        <a href="admin-lista.html" class="btn-link">📋 Ver Lista de Estudiantes</a>
+        <a href="index.html" class="btn-link">🏠 Inicio</a>
+    </div>
+    
+    <script type="module">
+        import { db } from './js/conexion.js';
+        import { collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
+        // Elementos del DOM
+        const progressContainer = document.getElementById('progressContainer');
+        const progressMessage = document.getElementById('progressMessage');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const btnSubir = document.getElementById('btn-subir');
+        const btnVaciar = document.getElementById('btn-vaciar');
+        const fileInput = document.getElementById('csv-file');
+        
+        function mostrarProgreso(mostrar, mensaje = "Procesando...") {
+            if (mostrar) {
+                progressContainer.classList.add('visible');
+                progressMessage.innerHTML = `<span class="spinner"></span> ${mensaje}`;
+                progressBar.style.width = '0%';
+                progressText.innerText = '';
+            } else {
+                progressContainer.classList.remove('visible');
+            }
+        }
+        
+        function actualizarProgreso(porcentaje, texto) {
+            progressBar.style.width = `${porcentaje}%`;
+            progressText.innerText = texto;
+        }
+        
+        // Función para subir CSV
+        async function procesarArchivo() {
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert("⚠️ Por favor, selecciona un archivo CSV");
+                return;
+            }
+            
+            mostrarProgreso(true, `📖 Leyendo archivo: ${file.name}...`);
+            
+            const reader = new FileReader();
+            reader.readAsText(file);
+            
+            reader.onload = async (e) => {
+                const lineas = e.target.result.split('\n');
+                let datosValidos = [];
+                
+                // Procesar líneas (saltamos la primera que es el encabezado)
+                for (let i = 1; i < lineas.length; i++) {
+                    const linea = lineas[i].trim();
+                    if (linea !== "") {
+                        const campos = linea.split(',');
+                        if (campos.length >= 6) {
+                            datosValidos.push({
+                                "Cédula": campos[0].trim(),
+                                "Apellido": campos[1].trim(),
+                                "Nombre": campos[2].trim(),
+                                "Carrera": campos[3].trim(),
+                                "Sección": campos[4].trim(),
+                                "Dirección": campos[5].trim()
+                            });
+                        } else {
+                            console.warn(`Línea ${i+1} ignorada: no tiene 6 columnas.`);
+                        }
+                    }
+                }
+                
+                const totalRegistros = datosValidos.length;
+                if (totalRegistros === 0) {
+                    alert("❌ No se encontraron registros válidos en el CSV.");
+                    mostrarProgreso(false);
+                    return;
+                }
+                
+                mostrarProgreso(true, `🚀 Subiendo ${totalRegistros} registros...`);
+                actualizarProgreso(0, `0 de ${totalRegistros}`);
+                
+                let contadorExito = 0;
+                let contadorError = 0;
+                
+                for (let i = 0; i < totalRegistros; i++) {
+                    try {
+                        await addDoc(collection(db, "estudiantes"), datosValidos[i]);
+                        contadorExito++;
+                        const porcentaje = Math.round(((i + 1) / totalRegistros) * 100);
+                        actualizarProgreso(porcentaje, `${i+1} de ${totalRegistros} (${porcentaje}%)`);
+                        progressMessage.innerHTML = `<span class="spinner"></span> Subiendo... ✅ ${contadorExito} registros OK`;
+                    } catch (error) {
+                        console.error(`Error en registro ${i+1}:`, error);
+                        contadorError++;
+                        progressMessage.innerHTML = `<span class="spinner"></span> ⚠️ Error en registro ${i+1}, continuando...`;
+                    }
+                }
+                
+                mostrarProgreso(false);
+                alert(`✅ Proceso completado\n✅ Éxito: ${contadorExito}\n❌ Errores: ${contadorError}`);
+                fileInput.value = '';
+            };
+            
+            reader.onerror = () => {
+                mostrarProgreso(false);
+                alert("❌ Error al leer el archivo");
+            };
+        }
+        
+        // Función para vaciar toda la base de datos
+        async function vaciarTodo() {
+            if (!confirm("⚠️ ¿Seguro que quieres borrar TODOS los registros? Esta acción NO se puede deshacer.")) {
+                return;
+            }
+            
+            mostrarProgreso(true, "🔍 Obteniendo lista de estudiantes...");
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "estudiantes"));
+                const totalDocs = querySnapshot.size;
+                
+                if (totalDocs === 0) {
+                    alert("ℹ️ No hay registros para eliminar.");
+                    mostrarProgreso(false);
+                    return;
+                }
+                
+                mostrarProgreso(true, `🗑️ Eliminando ${totalDocs} registros...`);
+                actualizarProgreso(0, `0 de ${totalDocs}`);
+                
+                let contadorEliminados = 0;
+                
+                for (const documento of querySnapshot.docs) {
+                    await deleteDoc(doc(db, "estudiantes", documento.id));
+                    contadorEliminados++;
+                    const porcentaje = Math.round((contadorEliminados / totalDocs) * 100);
+                    actualizarProgreso(porcentaje, `${contadorEliminados} de ${totalDocs} (${porcentaje}%)`);
+                    progressMessage.innerHTML = `<span class="spinner"></span> Eliminando... 🗑️ ${contadorEliminados} registros`;
+                }
+                
+                mostrarProgreso(false);
+                alert(`🗑️ Eliminación completada. Se eliminaron ${contadorEliminados} registros.`);
+                
+            } catch (error) {
+                console.error("Error al limpiar:", error);
+                mostrarProgreso(false);
+                alert("❌ Ocurrió un error durante la eliminación.");
+            }
+        }
+        
+        // Asignar eventos a los botones
+        btnSubir.addEventListener('click', procesarArchivo);
+        btnVaciar.addEventListener('click', vaciarTodo);
+    </script>
+</body>
+</html>
