@@ -17,28 +17,38 @@ window.procesarArchivo = async function() {
         let contador = 0;
         let errores = 0;
         
+        // Saltamos la primera línea (encabezados)
         for (let i = 1; i < lineas.length; i++) {
             const linea = lineas[i].trim();
             if (linea === "") continue;
             
             const datos = linea.split(',');
-            if (datos.length >= 3) {
+            if (datos.length >= 6) {
                 try {
                     await addDoc(collection(db, "estudiantes"), {
                         "Cédula": datos[0].trim(),
-                        "Apellidos": datos[1].trim(),
-                        "Nombres": datos[2].trim(),
-                        "Carrera": datos[3] ? datos[3].trim() : "Técnico en Sistemas"
+                        "Apellido": datos[1].trim(),
+                        "Nombre": datos[2].trim(),
+                        "Carrera": datos[3].trim(),
+                        "Sección": datos[4].trim(),
+                        "Dirección": datos[5].trim()
                     });
                     contador++;
                 } catch (error) {
+                    console.error("Error al guardar:", error);
                     errores++;
                 }
+            } else {
+                console.warn(`Línea ${i} ignorada: no tiene suficientes campos`);
             }
         }
         
         alert(`✅ Éxito! ${contador} registros cargados. Errores: ${errores}`);
         fileInput.value = '';
+    };
+    
+    reader.onerror = () => {
+        alert("❌ Error al leer el archivo");
     };
 };
 
