@@ -24,13 +24,25 @@ window.buscarYGenerar = async function() {
             alert("❌ Cédula no encontrada en el sistema.");
         } else {
             snap.forEach((doc) => {
-                localStorage.setItem('estudiante_activo', JSON.stringify(doc.data()));
-                const ruta = tipo === 'estudio' ? 'formatos/constancia-estudios.html' : 'formatos/constancia-trabajo.html';
+                const data = doc.data();
+                // Guardamos TODOS los campos en localStorage
+                localStorage.setItem('estudiante_activo', JSON.stringify({
+                    cedula: data.Cédula,
+                    apellido: data.Apellido,
+                    nombre: data.Nombre,
+                    carrera: data.Carrera,
+                    seccion: data.Sección,
+                    direccion: data.Dirección
+                }));
+                const ruta = tipo === 'estudio' 
+                    ? 'formatos/constancia-estudios.html' 
+                    : 'formatos/constancia-trabajo.html';
                 window.location.href = ruta;
             });
         }
     } catch (error) {
-        alert("❌ Error al consultar. Intenta de nuevo.");
+        console.error("Error en la búsqueda:", error);
+        alert("❌ Error al consultar la base de datos. Intenta de nuevo.");
     } finally {
         btn.innerText = textoOriginal;
         btn.disabled = false;
