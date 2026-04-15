@@ -6,9 +6,8 @@
     <title>Panel de Administración - Lista de Estudiantes</title>
     <link rel="stylesheet" href="css/estilos.css">
     <style>
-        /* Estilos específicos para la tabla */
         .table-container {
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             overflow-x: auto;
             margin: 20px 0;
@@ -21,18 +20,19 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-size: 14px;
         }
         
         th {
             background: #003366;
             color: white;
-            padding: 12px;
+            padding: 12px 8px;
             text-align: left;
             font-weight: bold;
         }
         
         td {
-            padding: 10px 12px;
+            padding: 10px 8px;
             border-bottom: 1px solid #e0e0e0;
         }
         
@@ -51,55 +51,32 @@
             transition: all 0.3s;
         }
         
-        .btn-editar {
-            background: #ffc107;
-            color: #333;
-        }
-        
-        .btn-editar:hover {
-            background: #e0a800;
-        }
-        
-        .btn-eliminar {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-eliminar:hover {
-            background: #c82333;
-        }
-        
-        .btn-refresh {
-            background: #17a2b8;
-            color: white;
-            margin-bottom: 20px;
-            width: auto;
-            padding: 10px 20px;
-        }
-        
-        .btn-refresh:hover {
-            background: #138496;
-        }
-
-        /* NUEVO: Estilo para el botón "Nuevo Estudiante" */
-        .btn-nuevo {
-            background: #28a745;
-            color: white;
-            margin-bottom: 20px;
-            width: auto;
-            padding: 10px 20px;
-        }
-        .btn-nuevo:hover {
-            background: #218838;
-        }
+        .btn-editar { background: #ffc107; color: #333; }
+        .btn-editar:hover { background: #e0a800; }
+        .btn-eliminar { background: #dc3545; color: white; }
+        .btn-eliminar:hover { background: #c82333; }
+        .btn-refresh { background: #17a2b8; color: white; width: auto; padding: 10px 20px; }
+        .btn-refresh:hover { background: #138496; }
+        .btn-nuevo { background: #28a745; color: white; width: auto; padding: 10px 20px; }
+        .btn-nuevo:hover { background: #218838; }
+        .btn-exportar { background: #6c757d; color: white; width: auto; padding: 10px 20px; }
+        .btn-exportar:hover { background: #5a6268; }
         
         .buscador-tabla {
-            margin-bottom: 20px;
             padding: 10px;
-            width: 300px;
+            width: 250px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
+        }
+        
+        .filtro-carrera, .filtro-seccion {
+            padding: 10px;
+            width: 200px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
         }
         
         .estadisticas {
@@ -109,6 +86,29 @@
             margin-bottom: 20px;
             font-weight: bold;
             color: #003366;
+        }
+        
+        .filtros-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .filtros-container label {
+            font-weight: bold;
+            color: #003366;
+            font-size: 13px;
+        }
+        
+        .grupo-filtro {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .modal {
@@ -128,38 +128,15 @@
             background: white;
             padding: 30px;
             border-radius: 15px;
-            width: 400px;
+            width: 450px;
             max-width: 90%;
         }
         
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: #003366;
-        }
-        
-        .modal-content input {
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .modal-buttons button {
-            flex: 1;
-            margin: 0;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 18px;
-            color: #003366;
-        }
+        .modal-content h3 { margin-bottom: 20px; color: #003366; }
+        .modal-content input { width: 100%; margin: 10px 0; padding: 10px; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-buttons button { flex: 1; margin: 0; }
+        .loading { text-align: center; padding: 50px; font-size: 18px; color: #003366; }
         
         .header-actions {
             display: flex;
@@ -169,24 +146,49 @@
             gap: 10px;
             margin-bottom: 20px;
         }
+        
+        @media (max-width: 768px) {
+            th, td { font-size: 12px; padding: 6px 4px; }
+            .btn-accion { padding: 4px 8px; font-size: 10px; }
+        }
     </style>
 </head>
 <body>
-    <div class="card" style="max-width: 1200px;">
+    <div class="card" style="max-width: 1400px;">
         <div class="logo">
             <h1>🏢 TecnoSistemas-V2</h1>
             <p>Panel de Administración - Lista de Estudiantes</p>
         </div>
         
         <div class="header-actions">
-            <input type="text" id="buscador" class="buscador-tabla" placeholder="🔍 Buscar por cédula, nombre o apellido...">
+            <div class="filtros-container">
+                <div class="grupo-filtro">
+                    <label>🔍 Buscar:</label>
+                    <input type="text" id="buscador" class="buscador-tabla" placeholder="Cédula, nombre o apellido...">
+                </div>
+                <div class="grupo-filtro">
+                    <label>📚 Carrera:</label>
+                    <select id="filtro-carrera" class="filtro-carrera">
+                        <option value="TODAS">📋 TODAS las carreras</option>
+                    </select>
+                </div>
+                <div class="grupo-filtro">
+                    <label>📌 Sección:</label>
+                    <select id="filtro-seccion" class="filtro-seccion">
+                        <option value="TODAS">📋 TODAS las secciones</option>
+                    </select>
+                </div>
+                <div class="grupo-filtro">
+                    <button class="btn-refresh" onclick="aplicarFiltros()">🎯 Aplicar Filtros</button>
+                </div>
+            </div>
             <div>
-                <!-- NUEVO: Botón para añadir estudiante -->
                 <button class="btn-nuevo" onclick="abrirNuevo()">➕ Nuevo Estudiante</button>
-                <button class="btn-refresh" onclick="cargarEstudiantes()">🔄 Refrescar Lista</button>
-                <a href="nominas.html" class="btn-primary" style="display: inline-block; padding: 10px 20px; text-decoration: none; margin-left: 10px;">📤 Cargar CSV</a>
-                <a href="solicitud.html" class="btn-secondary" style="display: inline-block; padding: 10px 20px; text-decoration: none; margin-left: 10px;">🔍 Buscador</a>
-                <a href="index.html" class="btn-link" style="margin-left: 10px;">🏠 Inicio</a>
+                <button class="btn-exportar" onclick="exportarCSV()">📎 Exportar CSV</button>
+                <button class="btn-refresh" onclick="cargarEstudiantes()">🔄 Refrescar</button>
+                <a href="nominas.html" class="btn-primary" style="display: inline-block; padding: 10px 20px; text-decoration: none;">📤 Cargar CSV</a>
+                <a href="solicitud.html" class="btn-secondary" style="display: inline-block; padding: 10px 20px; text-decoration: none;">🔍 Buscador</a>
+                <a href="index.html" class="btn-link">🏠 Inicio</a>
             </div>
         </div>
         
@@ -199,29 +201,31 @@
                 <thead>
                     <tr>
                         <th>Cédula</th>
-                        <th>Nombres</th>
-                        <th>Apellidos</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
                         <th>Carrera</th>
+                        <th>Sección</th>
+                        <th>Dirección</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-body">
-                    <tr>
-                        <td colspan="5" class="loading">Cargando datos...</td>
-                    </tr>
+                    <tr><td colspan="7" class="loading">Cargando datos...</td><ee
                 </tbody>
             </table>
         </div>
     </div>
     
-    <!-- Modal para EDITAR y NUEVO (reutilizamos el mismo) -->
+    <!-- Modal para EDITAR y NUEVO -->
     <div id="modal-editar" class="modal">
         <div class="modal-content">
             <h3 id="modal-titulo">✏️ Editar Estudiante</h3>
             <input type="text" id="edit-cedula" placeholder="Cédula">
-            <input type="text" id="edit-nombres" placeholder="Nombres">
-            <input type="text" id="edit-apellidos" placeholder="Apellidos">
+            <input type="text" id="edit-nombre" placeholder="Nombre">
+            <input type="text" id="edit-apellido" placeholder="Apellido">
             <input type="text" id="edit-carrera" placeholder="Carrera">
+            <input type="text" id="edit-seccion" placeholder="Sección">
+            <input type="text" id="edit-direccion" placeholder="Dirección">
             <div class="modal-buttons">
                 <button class="btn-primary" id="modal-guardar-btn">💾 Guardar</button>
                 <button class="btn-danger" onclick="cerrarModal()">❌ Cancelar</button>
@@ -233,175 +237,239 @@
         import { db } from './js/conexion.js';
         import { collection, getDocs, updateDoc, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
-        let estudiantesActuales = []; // Guardar todos los estudiantes para el buscador
-        let estudianteIdEditando = null; // Si es null, significa que estamos en modo "nuevo"
+        let estudiantesActuales = [];
+        let estudiantesFiltrados = [];
+        let estudianteIdEditando = null;
+        let carrerasUnicas = [];
+        let seccionesUnicas = [];
         
-        // Función para cargar todos los estudiantes
+        // Cargar estudiantes
         window.cargarEstudiantes = async function() {
             const tbody = document.getElementById('tabla-body');
-            tbody.innerHTML = '<tr><td colspan="5" class="loading">Cargando estudiantes...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="loading">Cargando estudiantes...</td><e';
             
             try {
                 const querySnapshot = await getDocs(collection(db, "estudiantes"));
                 estudiantesActuales = [];
+                const carrerasSet = new Set();
+                const seccionesSet = new Set();
                 
                 if (querySnapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="loading">📭 No hay estudiantes registrados. Ve a "Cargar CSV" para agregar.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading">📭 No hay estudiantes registrados. Ve a "Cargar CSV" para agregar.</td></tr>';
                     document.getElementById('estadisticas').innerHTML = '📊 Total: 0 estudiantes';
                     return;
                 }
                 
-                let html = '';
                 querySnapshot.forEach((docu) => {
                     const data = docu.data();
                     const estudiante = {
                         id: docu.id,
                         cedula: data.Cédula || '',
-                        nombres: data.Nombres || '',
-                        apellidos: data.Apellidos || '',
-                        carrera: data.Carrera || ''
+                        nombre: data.Nombre || '',
+                        apellido: data.Apellido || '',
+                        carrera: data.Carrera || 'Sin asignar',
+                        seccion: data.Sección || 'Sin asignar',
+                        direccion: data.Dirección || 'Sin asignar'
                     };
                     estudiantesActuales.push(estudiante);
-                    
-                    html += `
-                        <tr data-id="${estudiante.id}">
-                            <td>${estudiante.cedula}</td>
-                            <td>${estudiante.nombres}</td>
-                            <td>${estudiante.apellidos}</td>
-                            <td>${estudiante.carrera}</td>
-                            <td>
-                                <button class="btn-accion btn-editar" onclick="abrirEditar('${estudiante.id}')">✏️ Editar</button>
-                                <button class="btn-accion btn-eliminar" onclick="eliminarEstudiante('${estudiante.id}')">🗑️ Eliminar</button>
-                            </td>
-                        </tr>
-                    `;
+                    carrerasSet.add(estudiante.carrera);
+                    seccionesSet.add(estudiante.seccion);
                 });
                 
-                tbody.innerHTML = html;
-                document.getElementById('estadisticas').innerHTML = `📊 Total: ${estudiantesActuales.length} estudiantes registrados`;
+                // Actualizar selectores
+                carrerasUnicas = Array.from(carrerasSet).sort();
+                seccionesUnicas = Array.from(seccionesSet).sort();
+                
+                const selectCarrera = document.getElementById('filtro-carrera');
+                selectCarrera.innerHTML = '<option value="TODAS">📋 TODAS las carreras</option>';
+                carrerasUnicas.forEach(carrera => {
+                    selectCarrera.innerHTML += `<option value="${carrera}">📚 ${carrera}</option>`;
+                });
+                
+                const selectSeccion = document.getElementById('filtro-seccion');
+                selectSeccion.innerHTML = '<option value="TODAS">📋 TODAS las secciones</option>';
+                seccionesUnicas.forEach(seccion => {
+                    selectSeccion.innerHTML += `<option value="${seccion}">📌 ${seccion}</option>`;
+                });
+                
+                aplicarFiltros();
                 
             } catch (error) {
                 console.error("Error al cargar:", error);
-                tbody.innerHTML = '<tr><td colspan="5" class="loading">❌ Error al cargar los datos. Verifica tu conexión.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">❌ Error al cargar los datos. Verifica tu conexión.</td></tr>';
             }
         };
         
-        // Buscador en tiempo real
-        const buscador = document.getElementById('buscador');
-        if (buscador) {
-            buscador.addEventListener('keyup', function(e) {
-                const termino = e.target.value.toLowerCase();
-                const filtrados = estudiantesActuales.filter(est => 
-                    est.cedula.toLowerCase().includes(termino) ||
-                    est.nombres.toLowerCase().includes(termino) ||
-                    est.apellidos.toLowerCase().includes(termino) ||
-                    est.carrera.toLowerCase().includes(termino)
-                );
+        // Aplicar filtros combinados
+        window.aplicarFiltros = function() {
+            const textoBusqueda = document.getElementById('buscador').value.toLowerCase();
+            const carreraSeleccionada = document.getElementById('filtro-carrera').value;
+            const seccionSeleccionada = document.getElementById('filtro-seccion').value;
+            
+            estudiantesFiltrados = estudiantesActuales.filter(est => {
+                const matchTexto = !textoBusqueda || 
+                    est.cedula.toLowerCase().includes(textoBusqueda) ||
+                    est.nombre.toLowerCase().includes(textoBusqueda) ||
+                    est.apellido.toLowerCase().includes(textoBusqueda);
                 
-                const tbody = document.getElementById('tabla-body');
-                if (filtrados.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="loading">🔍 No se encontraron resultados</td></tr>';
-                } else {
-                    let html = '';
-                    filtrados.forEach(est => {
-                        html += `
-                            <tr data-id="${est.id}">
-                                <td>${est.cedula}</td>
-                                <td>${est.nombres}</td>
-                                <td>${est.apellidos}</td>
-                                <td>${est.carrera}</td>
-                                <td>
-                                    <button class="btn-accion btn-editar" onclick="abrirEditar('${est.id}')">✏️ Editar</button>
-                                    <button class="btn-accion btn-eliminar" onclick="eliminarEstudiante('${est.id}')">🗑️ Eliminar</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    tbody.innerHTML = html;
-                }
+                const matchCarrera = carreraSeleccionada === 'TODAS' || est.carrera === carreraSeleccionada;
+                const matchSeccion = seccionSeleccionada === 'TODAS' || est.seccion === seccionSeleccionada;
+                
+                return matchTexto && matchCarrera && matchSeccion;
             });
+            
+            renderizarTabla();
+            actualizarEstadisticas();
+        };
+        
+        // Renderizar tabla
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-body');
+            
+            if (estudiantesFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">🔍 No se encontraron resultados</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            estudiantesFiltrados.forEach(est => {
+                html += `
+                    <tr data-id="${est.id}">
+                        <td>${est.cedula}</td>
+                        <td>${est.nombre}</td>
+                        <td>${est.apellido}</td>
+                        <td>${est.carrera}</td>
+                        <td>${est.seccion}</td>
+                        <td>${est.direccion}</td>
+                        <td>
+                            <button class="btn-accion btn-editar" onclick="abrirEditar('${est.id}')">✏️ Editar</button>
+                            <button class="btn-accion btn-eliminar" onclick="eliminarEstudiante('${est.id}')">🗑️ Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
         }
         
-        // --- NUEVA FUNCIÓN: Abrir modal para crear estudiante ---
-        window.abrirNuevo = function() {
-            estudianteIdEditando = null; // Modo creación
-            document.getElementById('modal-titulo').innerText = '➕ Nuevo Estudiante';
-            // Limpiar campos del formulario
-            document.getElementById('edit-cedula').value = '';
-            document.getElementById('edit-nombres').value = '';
-            document.getElementById('edit-apellidos').value = '';
-            document.getElementById('edit-carrera').value = '';
+        // Actualizar estadísticas
+        function actualizarEstadisticas() {
+            const carreraSeleccionada = document.getElementById('filtro-carrera').value;
+            const seccionSeleccionada = document.getElementById('filtro-seccion').value;
+            let texto = `📊 Mostrando ${estudiantesFiltrados.length} de ${estudiantesActuales.length} estudiantes`;
             
-            // Cambiar la acción del botón guardar temporalmente
+            if (carreraSeleccionada !== 'TODAS') texto += ` | 📚 ${carreraSeleccionada}`;
+            if (seccionSeleccionada !== 'TODAS') texto += ` | 📌 ${seccionSeleccionada}`;
+            
+            document.getElementById('estadisticas').innerHTML = texto;
+        }
+        
+        // Exportar CSV
+        window.exportarCSV = function() {
+            if (estudiantesFiltrados.length === 0) {
+                alert("No hay datos para exportar");
+                return;
+            }
+            
+            let csvContent = "Cédula,Nombre,Apellido,Carrera,Sección,Dirección\n";
+            estudiantesFiltrados.forEach(est => {
+                csvContent += `"${est.cedula}","${est.nombre}","${est.apellido}","${est.carrera}","${est.seccion}","${est.direccion}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute('download', `nomina_${new Date().toISOString().slice(0,19)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`✅ Exportados ${estudiantesFiltrados.length} estudiantes`);
+        };
+        
+        // Abrir modal nuevo
+        window.abrirNuevo = function() {
+            estudianteIdEditando = null;
+            document.getElementById('modal-titulo').innerText = '➕ Nuevo Estudiante';
+            document.getElementById('edit-cedula').value = '';
+            document.getElementById('edit-nombre').value = '';
+            document.getElementById('edit-apellido').value = '';
+            document.getElementById('edit-carrera').value = '';
+            document.getElementById('edit-seccion').value = '';
+            document.getElementById('edit-direccion').value = '';
             const guardarBtn = document.getElementById('modal-guardar-btn');
             guardarBtn.onclick = () => guardarNuevoEstudiante();
-            
             document.getElementById('modal-editar').style.display = 'flex';
         };
         
-        // --- FUNCIÓN MODIFICADA: Abrir modal para editar ---
+        // Abrir editar
         window.abrirEditar = async function(id) {
             estudianteIdEditando = id;
             document.getElementById('modal-titulo').innerText = '✏️ Editar Estudiante';
             const estudiante = estudiantesActuales.find(e => e.id === id);
             if (estudiante) {
                 document.getElementById('edit-cedula').value = estudiante.cedula;
-                document.getElementById('edit-nombres').value = estudiante.nombres;
-                document.getElementById('edit-apellidos').value = estudiante.apellidos;
+                document.getElementById('edit-nombre').value = estudiante.nombre;
+                document.getElementById('edit-apellido').value = estudiante.apellido;
                 document.getElementById('edit-carrera').value = estudiante.carrera;
-                
-                // Asegurar que el botón guardar ejecute la edición
+                document.getElementById('edit-seccion').value = estudiante.seccion;
+                document.getElementById('edit-direccion').value = estudiante.direccion;
                 const guardarBtn = document.getElementById('modal-guardar-btn');
                 guardarBtn.onclick = () => guardarEdicion();
-                
                 document.getElementById('modal-editar').style.display = 'flex';
             }
         };
         
-        // --- NUEVA FUNCIÓN: Guardar estudiante nuevo ---
+        // Guardar nuevo
         window.guardarNuevoEstudiante = async function() {
             const nuevaCedula = document.getElementById('edit-cedula').value.trim();
-            const nuevosNombres = document.getElementById('edit-nombres').value.trim();
-            const nuevosApellidos = document.getElementById('edit-apellidos').value.trim();
+            const nuevoNombre = document.getElementById('edit-nombre').value.trim();
+            const nuevoApellido = document.getElementById('edit-apellido').value.trim();
             const nuevaCarrera = document.getElementById('edit-carrera').value.trim();
+            const nuevaSeccion = document.getElementById('edit-seccion').value.trim();
+            const nuevaDireccion = document.getElementById('edit-direccion').value.trim();
             
-            if (!nuevaCedula || !nuevosNombres || !nuevosApellidos || !nuevaCarrera) {
+            if (!nuevaCedula || !nuevoNombre || !nuevoApellido || !nuevaCarrera || !nuevaSeccion || !nuevaDireccion) {
                 alert("⚠️ Por favor, completa todos los campos.");
                 return;
             }
             
-            // Opcional: Verificar si ya existe una cédula igual para evitar duplicados
             const existe = estudiantesActuales.some(est => est.cedula === nuevaCedula);
             if (existe) {
-                alert("❌ Ya existe un estudiante con esta cédula. Usa la opción 'Editar' si quieres modificar sus datos.");
+                alert("❌ Ya existe un estudiante con esta cédula.");
                 return;
             }
             
             try {
                 await addDoc(collection(db, "estudiantes"), {
                     "Cédula": nuevaCedula,
-                    "Nombres": nuevosNombres,
-                    "Apellidos": nuevosApellidos,
-                    "Carrera": nuevaCarrera
+                    "Nombre": nuevoNombre,
+                    "Apellido": nuevoApellido,
+                    "Carrera": nuevaCarrera,
+                    "Sección": nuevaSeccion,
+                    "Dirección": nuevaDireccion
                 });
                 alert("✅ Estudiante agregado correctamente");
                 cerrarModal();
-                cargarEstudiantes(); // Recargar la tabla para mostrar el nuevo estudiante
+                cargarEstudiantes();
             } catch (error) {
                 console.error("Error al agregar:", error);
                 alert("❌ Error al agregar el estudiante");
             }
         };
         
-        // --- FUNCIÓN MODIFICADA: Guardar edición (refactorizada para claridad) ---
+        // Guardar edición
         window.guardarEdicion = async function() {
             if (!estudianteIdEditando) return;
             
             const datosActualizados = {
                 "Cédula": document.getElementById('edit-cedula').value,
-                "Nombres": document.getElementById('edit-nombres').value,
-                "Apellidos": document.getElementById('edit-apellidos').value,
-                "Carrera": document.getElementById('edit-carrera').value
+                "Nombre": document.getElementById('edit-nombre').value,
+                "Apellido": document.getElementById('edit-apellido').value,
+                "Carrera": document.getElementById('edit-carrera').value,
+                "Sección": document.getElementById('edit-seccion').value,
+                "Dirección": document.getElementById('edit-direccion').value
             };
             
             try {
@@ -416,10 +484,9 @@
             }
         };
         
-        // Eliminar estudiante
+        // Eliminar
         window.eliminarEstudiante = async function(id) {
-            if (!confirm("⚠️ ¿Estás seguro de eliminar este estudiante? Esta acción no se puede deshacer.")) return;
-            
+            if (!confirm("⚠️ ¿Estás seguro de eliminar este estudiante?")) return;
             try {
                 await deleteDoc(doc(db, "estudiantes", id));
                 alert("✅ Estudiante eliminado correctamente");
@@ -435,7 +502,11 @@
             estudianteIdEditando = null;
         };
         
-        // Cargar datos al iniciar
+        // Event listeners
+        document.getElementById('buscador').addEventListener('keyup', () => aplicarFiltros());
+        document.getElementById('filtro-carrera').addEventListener('change', () => aplicarFiltros());
+        document.getElementById('filtro-seccion').addEventListener('change', () => aplicarFiltros());
+        
         cargarEstudiantes();
     </script>
 </body>
