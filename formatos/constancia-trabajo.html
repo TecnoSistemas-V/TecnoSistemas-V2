@@ -26,4 +26,40 @@
         <div class="contenido">
             <div class="header">
                 <h1>TECNOSISTEMAS-V2</h1>
-                <p>
+                <p>Formación Tecnológica de Excelencia</p>
+                <p>Valera - Estado Trujillo</p>
+            </div>
+            <div class="titulo-constancia">
+                <h2>CONSTANCIA DE TRABAJO</h2>
+            </div>
+            <div class="cuerpo">
+                <p>Por medio de la presente, el Departamento de Recursos Humanos de <strong>TECNOSISTEMAS-V2</strong>, hace constar que el(la) ciudadano(a):</p>
+                <p style="text-align: center; margin: 20px 0; font-size: 18px;"><strong id="nombre-completo"></strong></p>
+                <p>Titular de la Cédula de Identidad N° <strong><span id="cedula"></span></strong>, con domicilio en <strong><span id="direccion"></span></strong>, ha prestado servicios en esta institución.</p>
+                <p><strong>Área de desempeño:</strong> <span id="carrera"></span></p>
+                <p><strong>Sección asignada:</strong> <span id="seccion"></span></p>
+                <p>Se extiende la presente constancia a solicitud del interesado.</p>
+            </div>
+            <div class="footer">
+                <div class="firma-linea"></div>
+                <p>Lic. María González<br>Coordinadora de RRHH</p>
+                <p>Fecha: <span id="fecha"></span></p>
+            </div>
+        </div>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <script>
+        const data = localStorage.getItem('estudiante_activo');
+        if (!data) { window.location.href = "../solicitud.html"; }
+        else {
+            const e = JSON.parse(data);
+            document.getElementById('nombre-completo').innerText = e.nombre + " " + e.apellido;
+            document.getElementById('cedula').innerText = e.cedula;
+            document.getElementById('carrera').innerText = e.carrera;
+            document.getElementById('seccion').innerText = e.seccion;
+            document.getElementById('direccion').innerText = e.direccion;
+            document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+        }
+    </script>
+</body>
+</html>
