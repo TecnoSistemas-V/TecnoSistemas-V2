@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador - TecnoSistemas-V2</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <h1>🏢 TecnoSistemas-V2</h1>
+            <p>Sistema de Generación de Constancias</p>
+        </div>
+        <h2>Consultar Constancia</h2>
+        <input type="text" id="cedula-input" placeholder="Ingresa tu Cédula" autocomplete="off">
+        <select id="tipo-documento">
+            <option value="estudio">📘 Constancia de Estudios</option>
+            <option value="trabajo">💼 Constancia de Trabajo</option>
+        </select>
+        <button class="btn-secondary" onclick="buscarYGenerar()">🔍 GENERAR CONSTANCIA</button>
+        <div class="separator"></div>
+        <a href="index.html" class="btn-link">🏠 Inicio</a>
+    </div>
+    <script type="module" src="js/buscar.js"></script>
+</body>
+</html>
