@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal - TecnoSistemas-V2</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #003366 0%, #001a33 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .portal-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .portal-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .portal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .portal-header h1 {
+            color: #003366;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .portal-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px 10px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            display: block;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            border-color: #28a745;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .menu-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .menu-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 5px;
+        }
+        
+        .menu-desc {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        .menu-item.estudios .menu-icon { color: #28a745; }
+        .menu-item.trabajo .menu-icon { color: #003366; }
+        .menu-item.admin .menu-icon { color: #ffc107; }
+        .menu-item.csv .menu-icon { color: #17a2b8; }
+        .menu-item.verificar .menu-icon { color: #6c757d; }
+        .menu-item.inicio .menu-icon { color: #003366; }
+        
+        .footer-info {
+            background: #e8f4fd;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #003366;
+            text-align: center;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-top: 8px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 500px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            .portal-card {
+                padding: 20px;
+            }
+        }
+        
+        .btn-minimizar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #003366;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .btn-minimizar:hover {
+            background: #28a745;
+            transform: scale(1.05);
+        }
+        
+        .instruccion {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <div class="portal-card">
+            <div class="portal-header">
+                <h1>🏢 TecnoSistemas-V2</h1>
+                <p>Portal de Acceso Rápido - Menú Central</p>
+            </div>
+            
+            <div class="instruccion">
+                💡 <strong>Consejo:</strong> Mantén esta página abierta en una pestaña. 
+                Cada enlace se abrirá en una <strong>nueva pestaña</strong> para que siempre 
+                tengas visible este menú.
+            </div>
+            
+            <div class="menu-grid">
+                <!-- Inicio -->
+                <a href="#" class="menu-item inicio" onclick="abrirEnNuevaPestaña('index.html'); return false;">
+                    <span class="menu-icon">🏠</span>
+                    <span class="menu-title">Inicio</span>
+                    <span class="menu-desc">Página principal</span>
+                </a>
+                
+                <!-- Generar Constancia -->
+                <a href="#" class="menu-item estudios" onclick="abrirEnNuevaPestaña('solicitud.html'); return false;">
+                    <span class="menu-icon">🔍</span>
+                    <span class="menu-title">Generar Constancia</span>
+                    <span class="menu-desc">Estudiantes buscan por cédula</span>
+                </a>
+                
+                <!-- Verificar Constancia -->
+                <a href="#" class="menu-item verificar" onclick="abrirEnNuevaPestaña('verificar.html'); return false;">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-title">Verificar Constancia</span>
+                    <span class="menu-desc">Validar autenticidad por QR</span>
+                </a>
+                
+                <!-- Panel Admin Tabla -->
+                <a href="#" class="menu-item admin" onclick="abrirEnNuevaPestaña('admin-lista.html'); return false;">
+                    <span class="menu-icon">👨‍💼</span>
+                    <span class="menu-title">Panel Admin (Tabla)</span>
+                    <span class="menu-desc">Gestión completa CRUD</span>
+                </a>
+                
+                <!-- Panel Admin CSV -->
+                <a href="#" class="menu-item csv" onclick="abrirEnNuevaPestaña('nominas.html'); return false;">
+                    <span class="menu-icon">📤</span>
+                    <span class="menu-title">Panel Admin (CSV)</span>
+                    <span class="menu-desc">Carga masiva de estudiantes</span>
+                </a>
+                
+                <!-- Constancia Estudios -->
+                <a href="#" class="menu-item estudios" onclick="abrirEnNuevaPestaña('formatos/constancia-estudios.html'); return false;">
+                    <span class="menu-icon">📘</span>
+                    <span class="menu-title">Constancia Estudios</span>
+                    <span class="menu-desc">Formato académico</span>
+                </a>
+                
+                <!-- Constancia Trabajo -->
+                <a href="#" class="menu-item trabajo" onclick="abrirEnNuevaPestaña('formatos/constancia-trabajo.html'); return false;">
+                    <span class="menu-icon">💼</span>
+                    <span class="menu-title">Constancia Trabajo</span>
+                    <span class="menu-desc">Formato laboral</span>
+                </a>
+                
+                <!-- Base de Datos Firebase -->
+                <a href="#" class="menu-item admin" onclick="abrirEnNuevaPestaña('https://console.firebase.google.com/u/0/project/tecnosistemas-v/firestore/databases/-default-/data/~2Festudiantes'); return false;">
+                    <span class="menu-icon">🗄️</span>
+                    <span class="menu-title">Firebase Console</span>
+                    <span class="menu-desc">Base de datos en la nube</span>
+                </a>
+            </div>
+            
+            <div class="footer-info">
+                <strong>📊 Estadísticas del Sistema</strong><br>
+                🎓 Estudiantes: 175 registros<br>
+                🔐 Verificación: QR + Código Único<br>
+                📅 Última actualización: Abril 2026
+                <div class="badge">🟢 Sistema Operativo</div>
+            </div>
+        </div>
+        
+        <div class="portal-card">
+            <div class="portal-header">
+                <h3>📋 Enlaces Rápidos</h3>
+            </div>
+            
+            <div class="menu-grid" style="grid-template-columns: 1fr;">
+                <a href="#" class="menu-item" onclick="abrirTodas(); return false;" style="background: #28a745; color: white;">
+                    <span class="menu-icon">🚀</span>
+                    <span class="menu-title" style="color: white;">Abrir Todas las Páginas</span>
+                    <span class="menu-desc" style="color: #e0e0e0;">Abre todas las herramientas en nuevas pestañas</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <button class="btn-minimizar" onclick="minimizarPortal()" title="Minimizar portal">⬜</button>
+    
+    <script>
+        // Función para abrir en nueva pestaña
+        function abrirEnNuevaPestaña(url) {
+            window.open(url, '_blank');
+            return false;
+        }
+        
+        // Función para abrir todas las páginas principales
+        function abrirTodas() {
+            const urls = [
+                'index.html',
+                'solicitud.html',
+                'verificar.html',
+                'admin-lista.html',
+                'nominas.html',
+                'formatos/constancia-estudios.html',
+                'formatos/constancia-trabajo.html'
+            ];
+            
+            urls.forEach(url => {
+                window.open(url, '_blank');
+            });
+            
+            alert('🚀 Se abrieron todas las páginas en nuevas pestañas');
+        }
+        
+        // Función para minimizar el portal (abrir versión pequeña)
+        function minimizarPortal() {
+            // Crear un portal flotante más pequeño
+            let miniPortal = document.getElementById('mini-portal');
+            
+            if (!miniPortal) {
+                miniPortal = document.createElement('div');
+                miniPortal.id = 'mini-portal';
+                miniPortal.innerHTML = `
+                    <div style="position: fixed; bottom: 20px; right: 80px; background: #003366; color: white; border-radius: 50px; padding: 10px 20px; display: flex; gap: 15px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                        <a href="#" onclick="abrirEnNuevaPestaña('index.html'); return false;" style="color: white; text-decoration: none;">🏠</a>
+                        <a href="#" onclick="abrirEnNuevaPestaña('solicitud.html'); return false;" style="color: white; text-decoration: none;">🔍</a>
+                        <a href="#" onclick="abrirEnNuevaPestaña('verificar.html'); return false;" style="color: white; text-decoration: none;">✅</a>
+                        <a href="#" onclick="abrirEnNuevaPestaña('admin-lista.html'); return false;" style="color: white; text-decoration: none;">👨‍💼</a>
+                        <a href="#" onclick="abrirEnNuevaPestaña('nominas.html'); return false;" style="color: white; text-decoration: none;">📤</a>
+                        <a href="#" onclick="restaurarPortal(); return false;" style="color: #28a745; text-decoration: none;">🗂️</a>
+                    </div>
+                `;
+                document.body.appendChild(miniPortal);
+                
+                // Ocultar el portal completo
+                document.querySelector('.portal-container').style.display = 'none';
+                this.style.display = 'none';
+            }
+        }
+        
+        // Función para restaurar el portal
+        function restaurarPortal() {
+            const miniPortal = document.getElementById('mini-portal');
+            if (miniPortal) {
+                miniPortal.remove();
+                document.querySelector('.portal-container').style.display = 'block';
+                const btnMinimizar = document.querySelector('.btn-minimizar');
+                if (btnMinimizar) btnMinimizar.style.display = 'block';
+            }
+        }
+        
+        // Exponer funciones globalmente
+        window.abrirEnNuevaPestaña = abrirEnNuevaPestaña;
+        window.abrirTodas = abrirTodas;
+        window.minimizarPortal = minimizarPortal;
+        window.restaurarPortal = restaurarPortal;
+    </script>
+</body>
+</html>
