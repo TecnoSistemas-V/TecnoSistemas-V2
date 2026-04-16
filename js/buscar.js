@@ -2,8 +2,7 @@ import { db } from './conexion.js';
 import { collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Función para generar código único de verificación
-function generarCodigoUnico(cedula, timestamp) {
-    // Generar código con formato: ABC12-DEF34-GHI56
+function generarCodigoUnico() {
     const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let codigo = '';
     for (let i = 0; i < 15; i++) {
@@ -38,21 +37,21 @@ window.buscarYGenerar = async function() {
         if (snap.empty) {
             alert("❌ Cédula no encontrada en el sistema.");
         } else {
-            snap.forEach(async (doc) => {
-                const data = doc.data();
+            for (const docSnap of snap.docs) {
+                const data = docSnap.data();
                 const timestamp = new Date().getTime();
-                const codigoVerificacion = generarCodigoUnico(cedula, timestamp);
+                const codigoVerificacion = generarCodigoUnico();
                 
-                // Guardar el código en la colección "constancias" para verificación
+                // Guardar en la colección "constancias" para verificación
                 await addDoc(collection(db, "constancias"), {
                     codigo: codigoVerificacion,
                     tipo: tipo === 'estudio' ? 'Constancia de Estudios' : 'Constancia de Trabajo',
                     cedula: data.Cédula,
-                    nombre: data.Nombre,
-                    apellido: data.Apellido,
+                    nombre: data.Nombre || data.Nombres,
+                    apellido: data.Apellido || data.Apellidos,
                     carrera: data.Carrera,
-                    seccion: data.Sección,
-                    direccion: data.Dirección,
+                    seccion: data.Sección || "No especificada",
+                    direccion: data.Dirección || "No especificada",
                     fecha: new Date().toLocaleDateString('es-ES'),
                     timestamp: timestamp
                 });
@@ -60,11 +59,11 @@ window.buscarYGenerar = async function() {
                 // Guardar en localStorage incluyendo el código
                 localStorage.setItem('estudiante_activo', JSON.stringify({
                     cedula: data.Cédula,
-                    apellido: data.Apellido,
-                    nombre: data.Nombre,
+                    apellido: data.Apellido || data.Apellidos,
+                    nombre: data.Nombre || data.Nombres,
                     carrera: data.Carrera,
-                    seccion: data.Sección,
-                    direccion: data.Dirección,
+                    seccion: data.Sección || "No especificada",
+                    direccion: data.Dirección || "No especificada",
                     codigoVerificacion: codigoVerificacion
                 }));
                 
@@ -72,7 +71,7 @@ window.buscarYGenerar = async function() {
                     ? 'formatos/constancia-estudios.html' 
                     : 'formatos/constancia-trabajo.html';
                 window.location.href = ruta;
-            });
+            }
         }
     } catch (error) {
         console.error("Error en la búsqueda:", error);
