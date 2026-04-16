@@ -15,6 +15,12 @@ function generarCodigoUnico() {
     return codigo;
 }
 
+// Función para generar URL de verificación (para el QR)
+function generarUrlVerificacion(codigo) {
+    const baseUrl = window.location.origin + '/TecnoSistemas-V2/verificar.html';
+    return `${baseUrl}?codigo=${codigo}`;
+}
+
 window.buscarYGenerar = async function() {
     const input = document.getElementById('cedula-input');
     const tipo = document.getElementById('tipo-documento').value;
@@ -41,10 +47,12 @@ window.buscarYGenerar = async function() {
                 const data = docSnap.data();
                 const timestamp = new Date().getTime();
                 const codigoVerificacion = generarCodigoUnico();
+                const urlVerificacion = generarUrlVerificacion(codigoVerificacion);
                 
                 // Guardar en la colección "constancias" para verificación
                 await addDoc(collection(db, "constancias"), {
                     codigo: codigoVerificacion,
+                    url: urlVerificacion,
                     tipo: tipo === 'estudio' ? 'Constancia de Estudios' : 'Constancia de Trabajo',
                     cedula: data.Cédula,
                     nombre: data.Nombre || data.Nombres,
@@ -56,7 +64,7 @@ window.buscarYGenerar = async function() {
                     timestamp: timestamp
                 });
                 
-                // Guardar en localStorage incluyendo el código
+                // Guardar en localStorage incluyendo el código y la URL
                 localStorage.setItem('estudiante_activo', JSON.stringify({
                     cedula: data.Cédula,
                     apellido: data.Apellido || data.Apellidos,
@@ -64,7 +72,8 @@ window.buscarYGenerar = async function() {
                     carrera: data.Carrera,
                     seccion: data.Sección || "No especificada",
                     direccion: data.Dirección || "No especificada",
-                    codigoVerificacion: codigoVerificacion
+                    codigoVerificacion: codigoVerificacion,
+                    urlVerificacion: urlVerificacion
                 }));
                 
                 const ruta = tipo === 'estudio' 
