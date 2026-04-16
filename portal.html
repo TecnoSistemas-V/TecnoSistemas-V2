@@ -13,23 +13,22 @@
         }
         
         .portal-container {
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
         }
         
         .portal-card {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
             margin-bottom: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            text-align: center;
             animation: fadeIn 0.5s ease;
         }
         
         .portal-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .portal-header h1 {
@@ -43,17 +42,43 @@
             font-size: 14px;
         }
         
+        .seccion-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .seccion-titulo h3 {
+            color: #003366;
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .seccion-titulo .badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            color: white;
+        }
+        
+        .badge-publico { background: #28a745; }
+        .badge-admin { background: #dc3545; }
+        .badge-extra { background: #6c757d; }
+        
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 25px 0;
+            gap: 12px;
+            margin: 15px 0;
         }
         
         .menu-item {
             background: #f8f9fa;
             border-radius: 12px;
-            padding: 20px 10px;
+            padding: 15px 8px;
             text-align: center;
             text-decoration: none;
             transition: all 0.3s ease;
@@ -63,47 +88,40 @@
         }
         
         .menu-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             border-color: #28a745;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         
         .menu-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+            font-size: 32px;
+            margin-bottom: 8px;
             display: block;
         }
         
         .menu-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #003366;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         
         .menu-desc {
-            font-size: 11px;
+            font-size: 10px;
             color: #888;
         }
-        
-        .menu-item.estudios .menu-icon { color: #28a745; }
-        .menu-item.trabajo .menu-icon { color: #003366; }
-        .menu-item.admin .menu-icon { color: #ffc107; }
-        .menu-item.csv .menu-icon { color: #17a2b8; }
-        .menu-item.verificar .menu-icon { color: #6c757d; }
-        .menu-item.inicio .menu-icon { color: #003366; }
         
         .footer-info {
             background: #e8f4fd;
             border-radius: 12px;
-            padding: 15px;
+            padding: 12px;
             margin-top: 20px;
-            font-size: 12px;
+            font-size: 11px;
             color: #003366;
             text-align: center;
         }
         
-        .badge {
+        .badge-estado {
             display: inline-block;
             background: #28a745;
             color: white;
@@ -119,12 +137,8 @@
         }
         
         @media (max-width: 500px) {
-            .menu-grid {
-                grid-template-columns: 1fr;
-            }
-            .portal-card {
-                padding: 20px;
-            }
+            .menu-grid { grid-template-columns: 1fr; }
+            .portal-card { padding: 20px; }
         }
         
         .btn-minimizar {
@@ -152,11 +166,17 @@
         .instruccion {
             background: #fff3cd;
             border-left: 4px solid #ffc107;
-            padding: 12px;
+            padding: 10px;
             margin-bottom: 20px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             text-align: left;
+        }
+        
+        .separador-seccion {
+            margin: 15px 0;
+            height: 1px;
+            background: linear-gradient(to right, #e0e0e0, transparent);
         }
     </style>
 </head>
@@ -169,63 +189,81 @@
             </div>
             
             <div class="instruccion">
-                💡 <strong>Consejo:</strong> Mantén esta página abierta en una pestaña. 
-                Cada enlace se abrirá en una <strong>nueva pestaña</strong> para que siempre 
-                tengas visible este menú.
+                💡 <strong>Consejo:</strong> Mantén esta página abierta. Cada enlace se abrirá en una <strong>nueva pestaña</strong>.
+            </div>
+            
+            <!-- ==================== SECCIÓN PÚBLICA ==================== -->
+            <div class="seccion-titulo">
+                <h3>🌐 Acceso Público</h3>
+                <span class="badge badge-publico">PÚBLICO</span>
             </div>
             
             <div class="menu-grid">
-                <!-- Inicio -->
-                <a href="#" class="menu-item inicio" onclick="abrirEnNuevaPestaña('index.html'); return false;">
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('index.html'); return false;">
                     <span class="menu-icon">🏠</span>
                     <span class="menu-title">Inicio</span>
                     <span class="menu-desc">Página principal</span>
                 </a>
                 
-                <!-- Generar Constancia -->
-                <a href="#" class="menu-item estudios" onclick="abrirEnNuevaPestaña('solicitud.html'); return false;">
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('solicitud.html'); return false;">
                     <span class="menu-icon">🔍</span>
                     <span class="menu-title">Generar Constancia</span>
                     <span class="menu-desc">Estudiantes buscan por cédula</span>
                 </a>
                 
-                <!-- Verificar Constancia -->
-                <a href="#" class="menu-item verificar" onclick="abrirEnNuevaPestaña('verificar.html'); return false;">
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('verificar.html'); return false;">
                     <span class="menu-icon">✅</span>
                     <span class="menu-title">Verificar Constancia</span>
                     <span class="menu-desc">Validar autenticidad por QR</span>
                 </a>
                 
-                <!-- Panel Admin Tabla -->
-                <a href="#" class="menu-item admin" onclick="abrirEnNuevaPestaña('admin-lista.html'); return false;">
-                    <span class="menu-icon">👨‍💼</span>
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('formatos/constancia-estudios.html'); return false;">
+                    <span class="menu-icon">📘</span>
+                    <span class="menu-title">Constancia Estudios</span>
+                    <span class="menu-desc">Formato académico con QR</span>
+                </a>
+                
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('formatos/constancia-trabajo.html'); return false;">
+                    <span class="menu-icon">💼</span>
+                    <span class="menu-title">Constancia Trabajo</span>
+                    <span class="menu-desc">Formato laboral con QR</span>
+                </a>
+            </div>
+            
+            <div class="separador-seccion"></div>
+            
+            <!-- ==================== SECCIÓN ADMINISTRADOR ==================== -->
+            <div class="seccion-titulo">
+                <h3>👨‍💼 Área de Administración</h3>
+                <span class="badge badge-admin">RESTRINGIDO</span>
+            </div>
+            
+            <div class="menu-grid">
+                <!-- Panel Admin Tabla (CRUD) -->
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('admin-lista.html'); return false;">
+                    <span class="menu-icon">📋</span>
                     <span class="menu-title">Panel Admin (Tabla)</span>
-                    <span class="menu-desc">Gestión completa CRUD</span>
+                    <span class="menu-desc">Gestionar estudiantes: CRUD completo</span>
                 </a>
                 
                 <!-- Panel Admin CSV -->
-                <a href="#" class="menu-item csv" onclick="abrirEnNuevaPestaña('nominas.html'); return false;">
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('nominas.html'); return false;">
                     <span class="menu-icon">📤</span>
                     <span class="menu-title">Panel Admin (CSV)</span>
-                    <span class="menu-desc">Carga masiva de estudiantes</span>
+                    <span class="menu-desc">Carga masiva y limpieza total</span>
                 </a>
-                
-                <!-- Constancia Estudios -->
-                <a href="#" class="menu-item estudios" onclick="abrirEnNuevaPestaña('formatos/constancia-estudios.html'); return false;">
-                    <span class="menu-icon">📘</span>
-                    <span class="menu-title">Constancia Estudios</span>
-                    <span class="menu-desc">Formato académico</span>
-                </a>
-                
-                <!-- Constancia Trabajo -->
-                <a href="#" class="menu-item trabajo" onclick="abrirEnNuevaPestaña('formatos/constancia-trabajo.html'); return false;">
-                    <span class="menu-icon">💼</span>
-                    <span class="menu-title">Constancia Trabajo</span>
-                    <span class="menu-desc">Formato laboral</span>
-                </a>
-                
-                <!-- Base de Datos Firebase -->
-                <a href="#" class="menu-item admin" onclick="abrirEnNuevaPestaña('https://console.firebase.google.com/u/0/project/tecnosistemas-v/firestore/databases/-default-/data/~2Festudiantes'); return false;">
+            </div>
+            
+            <div class="separador-seccion"></div>
+            
+            <!-- ==================== SECCIÓN EXTERNA ==================== -->
+            <div class="seccion-titulo">
+                <h3>🔗 Recursos Externos</h3>
+                <span class="badge badge-extra">EXTERNO</span>
+            </div>
+            
+            <div class="menu-grid">
+                <a href="#" class="menu-item" onclick="abrirEnNuevaPestaña('https://console.firebase.google.com/u/0/project/tecnosistemas-v/firestore/databases/-default-/data/~2Festudiantes'); return false;">
                     <span class="menu-icon">🗄️</span>
                     <span class="menu-title">Firebase Console</span>
                     <span class="menu-desc">Base de datos en la nube</span>
@@ -237,20 +275,25 @@
                 🎓 Estudiantes: 175 registros<br>
                 🔐 Verificación: QR + Código Único<br>
                 📅 Última actualización: Abril 2026
-                <div class="badge">🟢 Sistema Operativo</div>
+                <div class="badge-estado">🟢 Sistema Operativo</div>
             </div>
         </div>
         
         <div class="portal-card">
             <div class="portal-header">
-                <h3>📋 Enlaces Rápidos</h3>
+                <h3>🚀 Acciones Rápidas</h3>
             </div>
             
-            <div class="menu-grid" style="grid-template-columns: 1fr;">
-                <a href="#" class="menu-item" onclick="abrirTodas(); return false;" style="background: #28a745; color: white;">
-                    <span class="menu-icon">🚀</span>
-                    <span class="menu-title" style="color: white;">Abrir Todas las Páginas</span>
-                    <span class="menu-desc" style="color: #e0e0e0;">Abre todas las herramientas en nuevas pestañas</span>
+            <div class="menu-grid" style="grid-template-columns: 1fr 1fr;">
+                <a href="#" class="menu-item" onclick="abrirTodasPublicas(); return false;" style="background: #28a745; color: white;">
+                    <span class="menu-icon">🌐</span>
+                    <span class="menu-title" style="color: white;">Abrir Públicas</span>
+                    <span class="menu-desc" style="color: #e0e0e0;">Todas las páginas públicas</span>
+                </a>
+                <a href="#" class="menu-item" onclick="abrirTodasAdmin(); return false;" style="background: #dc3545; color: white;">
+                    <span class="menu-icon">👨‍💼</span>
+                    <span class="menu-title" style="color: white;">Abrir Administración</span>
+                    <span class="menu-desc" style="color: #e0e0e0;">Todas las páginas de admin</span>
                 </a>
             </div>
         </div>
@@ -259,58 +302,47 @@
     <button class="btn-minimizar" onclick="minimizarPortal()" title="Minimizar portal">⬜</button>
     
     <script>
-        // Función para abrir en nueva pestaña
         function abrirEnNuevaPestaña(url) {
             window.open(url, '_blank');
             return false;
         }
         
-        // Función para abrir todas las páginas principales
-        function abrirTodas() {
-            const urls = [
-                'index.html',
-                'solicitud.html',
-                'verificar.html',
-                'admin-lista.html',
-                'nominas.html',
-                'formatos/constancia-estudios.html',
-                'formatos/constancia-trabajo.html'
-            ];
-            
-            urls.forEach(url => {
-                window.open(url, '_blank');
-            });
-            
-            alert('🚀 Se abrieron todas las páginas en nuevas pestañas');
+        function abrirTodasPublicas() {
+            const urls = ['index.html', 'solicitud.html', 'verificar.html', 'formatos/constancia-estudios.html', 'formatos/constancia-trabajo.html'];
+            urls.forEach(url => window.open(url, '_blank'));
+            alert('🌐 Se abrieron todas las páginas públicas');
         }
         
-        // Función para minimizar el portal (abrir versión pequeña)
+        function abrirTodasAdmin() {
+            const urls = ['admin-lista.html', 'nominas.html'];
+            urls.forEach(url => window.open(url, '_blank'));
+            alert('👨‍💼 Se abrieron las páginas de administración');
+        }
+        
         function minimizarPortal() {
-            // Crear un portal flotante más pequeño
             let miniPortal = document.getElementById('mini-portal');
-            
             if (!miniPortal) {
                 miniPortal = document.createElement('div');
                 miniPortal.id = 'mini-portal';
                 miniPortal.innerHTML = `
-                    <div style="position: fixed; bottom: 20px; right: 80px; background: #003366; color: white; border-radius: 50px; padding: 10px 20px; display: flex; gap: 15px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <div style="position: fixed; bottom: 20px; right: 80px; background: #003366; color: white; border-radius: 50px; padding: 8px 15px; display: flex; gap: 12px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                        <span style="font-size: 11px; color: #aaa;">PÚBLICO:</span>
                         <a href="#" onclick="abrirEnNuevaPestaña('index.html'); return false;" style="color: white; text-decoration: none;">🏠</a>
                         <a href="#" onclick="abrirEnNuevaPestaña('solicitud.html'); return false;" style="color: white; text-decoration: none;">🔍</a>
                         <a href="#" onclick="abrirEnNuevaPestaña('verificar.html'); return false;" style="color: white; text-decoration: none;">✅</a>
-                        <a href="#" onclick="abrirEnNuevaPestaña('admin-lista.html'); return false;" style="color: white; text-decoration: none;">👨‍💼</a>
-                        <a href="#" onclick="abrirEnNuevaPestaña('nominas.html'); return false;" style="color: white; text-decoration: none;">📤</a>
+                        <span style="color: #aaa;">|</span>
+                        <span style="font-size: 11px; color: #ff9999;">ADMIN:</span>
+                        <a href="#" onclick="abrirEnNuevaPestaña('admin-lista.html'); return false;" style="color: #ff9999; text-decoration: none;">📋</a>
+                        <a href="#" onclick="abrirEnNuevaPestaña('nominas.html'); return false;" style="color: #ff9999; text-decoration: none;">📤</a>
                         <a href="#" onclick="restaurarPortal(); return false;" style="color: #28a745; text-decoration: none;">🗂️</a>
                     </div>
                 `;
                 document.body.appendChild(miniPortal);
-                
-                // Ocultar el portal completo
                 document.querySelector('.portal-container').style.display = 'none';
                 this.style.display = 'none';
             }
         }
         
-        // Función para restaurar el portal
         function restaurarPortal() {
             const miniPortal = document.getElementById('mini-portal');
             if (miniPortal) {
@@ -321,9 +353,9 @@
             }
         }
         
-        // Exponer funciones globalmente
         window.abrirEnNuevaPestaña = abrirEnNuevaPestaña;
-        window.abrirTodas = abrirTodas;
+        window.abrirTodasPublicas = abrirTodasPublicas;
+        window.abrirTodasAdmin = abrirTodasAdmin;
         window.minimizarPortal = minimizarPortal;
         window.restaurarPortal = restaurarPortal;
     </script>
