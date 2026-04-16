@@ -18,6 +18,9 @@
         .firma-linea { width: 250px; border-top: 1px solid #000; margin: 10px auto; }
         .btn-print { position: fixed; bottom: 20px; right: 20px; background: #003366; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; }
         .btn-print:hover { background: #002244; }
+        .codigo-verificacion { margin-top: 30px; padding-top: 20px; border-top: 1px dashed #999; text-align: center; }
+        .codigo-verificacion p { font-size: 11px; color: #666; }
+        .codigo-verificacion .codigo { font-size: 14px; font-family: monospace; letter-spacing: 2px; font-weight: bold; color: #003366; }
         @media print { body { background: white; padding: 0; } .btn-print { display: none; } }
     </style>
 </head>
@@ -44,6 +47,13 @@
                 <div class="firma-linea"></div>
                 <p>Lic. María González<br>Coordinadora de RRHH</p>
                 <p>Fecha: <span id="fecha"></span></p>
+                
+                <div class="codigo-verificacion">
+                    <p>Código de verificación</p>
+                    <p class="codigo" id="codigo-verificacion"></p>
+                    <p>Verifique la autenticidad en:<br>
+                    <strong>https://tecnosistemas-v.github.io/TecnoSistemas-V2/verificar.html</strong></p>
+                </div>
             </div>
         </div>
     </div>
@@ -59,6 +69,9 @@
             document.getElementById('seccion').innerText = e.seccion;
             document.getElementById('direccion').innerText = e.direccion;
             document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+            if (e.codigoVerificacion) {
+                document.getElementById('codigo-verificacion').innerText = e.codigoVerificacion;
+            }
         }
     </script>
 </body>
