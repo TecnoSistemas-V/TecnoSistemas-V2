@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Constancia de Trabajo</title>
+    <!-- Librería para generar QR Code -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Times New Roman', Times, serif; background: #e0e0e0; padding: 40px 20px; display: flex; justify-content: center; align-items: center; }
@@ -14,13 +16,18 @@
         .titulo-constancia h2 { color: #003366; text-decoration: underline; }
         .cuerpo { margin: 40px 0; line-height: 2; text-align: justify; }
         .cuerpo strong { color: #003366; }
-        .footer { margin-top: 60px; text-align: center; }
+        .footer { margin-top: 40px; text-align: center; }
         .firma-linea { width: 250px; border-top: 1px solid #000; margin: 10px auto; }
         .btn-print { position: fixed; bottom: 20px; right: 20px; background: #003366; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; }
         .btn-print:hover { background: #002244; }
         .codigo-verificacion { margin-top: 30px; padding-top: 20px; border-top: 1px dashed #999; text-align: center; }
         .codigo-verificacion p { font-size: 11px; color: #666; }
         .codigo-verificacion .codigo { font-size: 14px; font-family: monospace; letter-spacing: 2px; font-weight: bold; color: #003366; }
+        .qr-container { display: flex; justify-content: center; margin: 15px 0; }
+        #qrcode { padding: 10px; background: white; display: inline-block; }
+        .verificacion-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
+        .verificacion-texto { flex: 1; text-align: left; }
+        .verificacion-qr { text-align: center; }
         @media print { body { background: white; padding: 0; } .btn-print { display: none; } }
     </style>
 </head>
@@ -49,10 +56,20 @@
                 <p>Fecha: <span id="fecha"></span></p>
                 
                 <div class="codigo-verificacion">
-                    <p>Código de verificación</p>
-                    <p class="codigo" id="codigo-verificacion"></p>
-                    <p>Verifique la autenticidad en:<br>
-                    <strong>https://tecnosistemas-v.github.io/TecnoSistemas-V2/verificar.html</strong></p>
+                    <div class="verificacion-footer">
+                        <div class="verificacion-texto">
+                            <p><strong>📱 Código de verificación</strong></p>
+                            <p class="codigo" id="codigo-verificacion"></p>
+                            <p style="font-size: 10px; margin-top: 5px;">
+                                Escanea el código QR o ingresa el código en:<br>
+                                <strong>https://tecnosistemas-v.github.io/TecnoSistemas-V2/verificar.html</strong>
+                            </p>
+                        </div>
+                        <div class="verificacion-qr">
+                            <div id="qrcode"></div>
+                            <p style="font-size: 9px; margin-top: 5px;">Escanee para verificar</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,8 +77,9 @@
     <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
     <script>
         const data = localStorage.getItem('estudiante_activo');
-        if (!data) { window.location.href = "../solicitud.html"; }
-        else {
+        if (!data) { 
+            window.location.href = "../solicitud.html"; 
+        } else {
             const e = JSON.parse(data);
             document.getElementById('nombre-completo').innerText = e.nombre + " " + e.apellido;
             document.getElementById('cedula').innerText = e.cedula;
@@ -69,8 +87,32 @@
             document.getElementById('seccion').innerText = e.seccion;
             document.getElementById('direccion').innerText = e.direccion;
             document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-ES');
+            
             if (e.codigoVerificacion) {
                 document.getElementById('codigo-verificacion').innerText = e.codigoVerificacion;
+                
+                // Generar código QR con la URL de verificación
+                if (e.urlVerificacion) {
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: e.urlVerificacion,
+                        width: 100,
+                        height: 100,
+                        colorDark: "#003366",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } else {
+                    // Si no hay URL, usar la URL base con el código
+                    const urlBase = "https://tecnosistemas-v.github.io/TecnoSistemas-V2/verificar.html?codigo=" + e.codigoVerificacion;
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: urlBase,
+                        width: 100,
+                        height: 100,
+                        colorDark: "#003366",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
             }
         }
     </script>
